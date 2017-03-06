@@ -1,0 +1,7 @@
+<form method="post" action="{% url 'blog:comment2' comment.id %}">
+    {% csrf_token %}
+    <div class="row">
+        {{ form2 }}
+    </div>
+    <button type="submit" class="comm-button">回复</button>
+</form>
