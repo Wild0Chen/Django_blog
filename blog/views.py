@@ -25,6 +25,9 @@ import markdown2
 
 # Create your views here.
 
+def HomePage(request):
+    return render(request, 'blog/home.html')
+
 class IndexView(ListView):
     template_name = 'blog/index.html'
     context_object_name = 'article_list'

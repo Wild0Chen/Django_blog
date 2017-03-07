@@ -4,6 +4,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
+    url(r'^$', views.HomePage, name='home'),
     url(r'^blog/$', views.IndexView.as_view(), name='index'),
     url(r'^tag/(?P<tag_id>\d+)$', views.TagView.as_view(), name='tag'),
     url(r'^blog/article/(?P<article_id>\d+)$', views.ArticleDetailView.as_view(), name='detail'),
