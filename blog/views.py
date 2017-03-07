@@ -1,6 +1,8 @@
 # -*-coding:utf-8-*-#
-import csv
+import sys
 
+sys.path.append('../')
+import csv
 from django.conf.global_settings import MEDIA_ROOT
 from django.core.files.storage import FileSystemStorage, DefaultStorage, default_storage, get_storage_class, Storage
 from django.core.urlresolvers import reverse
@@ -17,6 +19,7 @@ from django.views.generic import DetailView
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, DeleteView
 
+from mysite import settings
 from .forms import BlogCommentForm, BlogCommentForm2, upfile
 from .models import Article, Category, Tag, BlogComment, ficx
 from django.views.generic.list import ListView, BaseListView
@@ -27,6 +30,7 @@ import markdown2
 
 def HomePage(request):
     return render(request, 'blog/home.html')
+
 
 class IndexView(ListView):
     template_name = 'blog/index.html'
@@ -179,30 +183,22 @@ def none_page(request):
     return HttpResponseRedirect(x)
 
 
-def t(x):
-    print x
-
-
-def handle(f):
+def saveFile(f):
     file = f.files['file']
     f = ficx()
-    # f.filex.save(file.name, file)
-    # i = get_storage_class()#('/users/jafo/local/')
+    f.filex.save(file.name, file)
+    # i = get_storage_class()('blog/up_load_file')
     # i.save(file.name, file)
 
 
-class ffo(FormView):
+class upLoad(FormView):
     form_class = upfile
-    # template_name = 'blog/file.html'
     context_object_name = 'form'
-    template_name = 'template_response.html'
-    success_url = ''
-
-    # field = ['files']
+    template_name = 'upLoadFile.html'
 
     def get(self, request, *args, **kwargs):
         form = self.get_form()
-        return render(self.request, self.get_template(), context={'form': form})
+        return render(self.request, self.get_template_names(), context={'form': form})
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -212,30 +208,25 @@ class ffo(FormView):
             return self.form_invalid(form)
 
     def form_invalid(self, form):
-        return render(self.request, self.get_template(), context={'form': form})
+        return render(self.request, self.get_template_names(), context={'form': form})
 
     def form_valid(self, form):
-        handle(form)
-        return render_to_response('blog/file.html', context={'file': ficx.objects.all()})
+        saveFile(form)
+        return HttpResponseRedirect(reverse("blog:uploadfile_list"))
 
-
-def t1(request):
-    if request.method == "POST":
-        form = upfile(request.POST, request.FILES)
-        print form.errors
-        if form.is_valid():
-            handle(form)
-            return render_to_response('blog/file.html', context={'file': ficx.objects.all()})
-
-    else:
-        form = upfile()
-    return TemplateResponse(request, 'template_response.html', context={'form': form})
 
 def csv_view(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=file_name.csv'#附加Content－Disposition协议头，包含文件名
+    response['Content-Disposition'] = 'attachment; filename=file_name.csv'  # 附加Content－Disposition协议头，包含文件名
     writer = csv.writer(response)
     writer.writerow(['First row', 'f', 'b', 'z'])
     writer.writerow(['Second row', 'f', 'b', 'z', 'a', 'b', 'c'])
     writer.writerow(['是'])
     return response
+
+
+class uploadfile_list(ListView):
+    model = ficx
+    template_name = 'blog/file_list.html'
+    context_object_name = 'file_list'
+

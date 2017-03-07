@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul >
+{% for i in file_list %}
+    <li>{{ i }}</li>
+    <img src="{{ MEDIA_URL}}{{ i.filex.name }}">
+{% endfor %}
+</ul>
+</body>
+</html>

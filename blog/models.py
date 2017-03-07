@@ -1,7 +1,7 @@
 # -*-coding:utf-8-*-#
 from collections import defaultdict
 
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import FileSystemStorage, get_storage_class
 from django.core.urlresolvers import reverse
 from django.db import models
 import datetime
@@ -99,7 +99,10 @@ class BlogComment2(models.Model):
     def __unicode__(self):
         return self.body[:20]
 
+
 fs = FileSystemStorage()
+
+
 class ficx(models.Model):
     filex = models.FileField(storage=fs)
 
@@ -107,5 +110,3 @@ class ficx(models.Model):
         if hasattr(self.filex, 'name'):
             return self.filex.name
         return 'None'
-
-

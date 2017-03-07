@@ -1,4 +1,4 @@
-#-*-coding:utf-8-*-#
+# -*-coding:utf-8-*-#
 from django.conf.urls import url
 
 from . import views
@@ -13,8 +13,7 @@ urlpatterns = [
     url(r'^article/(?P<article_id>\d+)/comment/$', views.CommentPostView.as_view(), name='comment'),
     url(r'^article/comment2/(?P<comment_id>\d+)/$', views.CommentPostView2.as_view(), name='comment2'),
     url(r'^blog/del/(?P<comment_id>\d+)/$', views.DeleteComment.as_view(), name='comment_del'),
-    url(r'^1$', views.t1, name='v1'),
+    url(r'^uploadfile/$', views.upLoad.as_view(), name='upLoadFile'),
     url(r'^csv/$', views.csv_view, name='csv_view'),
-    # url(r'^1$', views.ffo.as_view(), name='v1'),
+    url(r'^uploadfile_list/$', views.uploadfile_list.as_view(), name='uploadfile_list'),
 ]
-
