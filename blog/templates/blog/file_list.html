@@ -4,13 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="../../static/lib/bootstrap.css">
+    <link rel="stylesheet" href="{% static 'lib/bootstrap.css' %}">
 </head>
 <body>
-<ul >
-{% for i in file_list %}
-    <li>{{ i }}</li>
-    <img src="{{ MEDIA_URL}}{{ i.filex.name }}">
-{% endfor %}
-</ul>
+<div class="page-header">
+    <h1>上传文件展示
+        <small>{{ MEDIA_URL }}</small>
+    </h1>
+</div>
+<div class="container center-block">
+    <div class="row">
+        {% for i in file_list %}
+        <div class="col-sm-6 com-md-3">
+            <a href="{{ i.filex.url }}" class="thumbnail"  title="点击看大图">
+                <img src="{{ i.filex.url }}" alt="i.filex.name">
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script href="../../static/lib/js/bootstrap.js"></script>
+<script href="../../static/blog/js/jquery.js"></script>
 </body>
 </html>
