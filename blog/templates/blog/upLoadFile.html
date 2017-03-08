@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="jumbotron">
+    <div class="page-head">
+
+        <h1>上传文件
+            <small>在<a href="{% url 'blog:upLoadFile_List' %}"></a>页面用来展示</small>
+        </h1>
+    </div>
+    <div class="container jumbotron">
+        <form enctype="multipart/form-data" method="post" class="form-inline">
+            <!-- 必须有multipart/form-data用来上传文件，不对字符编码 -->
+            {% csrf_token %}<!--防止跨域攻击，在视图函数上必须用render或者TemplateResponse总之必须使用带有request的那个进行检查-->
+            <div class="form-group">
+                {{ form.as_div }}
+            </div>
+            <button type="submit" class="btn btn-default btn-primary">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 提交
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

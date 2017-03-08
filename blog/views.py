@@ -194,7 +194,8 @@ def saveFile(f):
 class upLoad(FormView):
     form_class = upfile
     context_object_name = 'form'
-    template_name = 'upLoadFile.html'
+    template_name = 'blog/upLoadFile.html'
+
 
     def get(self, request, *args, **kwargs):
         form = self.get_form()
@@ -212,7 +213,7 @@ class upLoad(FormView):
 
     def form_valid(self, form):
         saveFile(form)
-        return HttpResponseRedirect(reverse("blog:uploadfile_list"))
+        return HttpResponseRedirect(reverse("blog:uploadFile_List"))
 
 
 def csv_view(request):
@@ -230,9 +231,3 @@ class uploadfile_list(ListView):
     template_name = 'blog/file_list.html'
     context_object_name = 'file_list'
 
-    def get_context_data(self, **kwargs):
-        all = ficx.objects.all()
-        for i in all:
-            print i
-            print i.filex.url
-        return super(uploadfile_list, self).get_context_data(**kwargs)

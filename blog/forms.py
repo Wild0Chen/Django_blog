@@ -34,6 +34,16 @@ class BlogCommentForm2(forms.ModelForm):
 
 
 class upfile(forms.Form):
-    title = forms.CharField(max_length=50)
-    file = forms.FileField()
+    title = forms.CharField(max_length=50, label_suffix=':', label='自定义文件名-没用',required=False,
+                            widget=forms.TextInput(attrs={'class': 'form-control',
+                                                          'placeholder': '可以为空'}))
+    file = forms.FileField(label='选择文件', label_suffix=':', error_messages={'required': '文件不能为空'})
 
+    def as_div(self):
+        "Returns this form rendered as HTML <p>s."
+        return self._html_output(
+            normal_row='<div class="form-group">%(label)s %(field)s%(help_text)s</div>',
+            error_row='%s',
+            row_ender='</div>',
+            help_text_html=' <span class="helptext">%s</span>',
+            errors_on_separate_row=True)

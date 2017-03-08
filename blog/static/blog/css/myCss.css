@@ -1,0 +1,37 @@
+.blog_footer {
+    padding-top: 50px;
+    padding-bottom: 50px;
+    max-resolution: 100px;
+    color: #99979c;
+    text-align: center;
+    background-color: #2a2730;
+}
+
+.blog_footer_links {
+    padding-left: 0;
+    margin-bottom: 20px;
+}
+
+.blog_footer_links a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.blog_footer_links li {
+    display: inline-block;
+}
+
+.blog_footer_links li + li {
+    margin-left: 15px;
+}
+
+@media (min-width: 768px) {
+    .blog_footer {
+        text-align: left;
+    }
+}
+
+.top_slide{
+    margin-top: 51px;
+}
