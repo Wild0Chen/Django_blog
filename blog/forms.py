@@ -40,7 +40,6 @@ class upfile(forms.Form):
     file = forms.FileField(label='选择文件', label_suffix=':', error_messages={'required': '文件不能为空'})
 
     def as_div(self):
-        "Returns this form rendered as HTML <p>s."
         return self._html_output(
             normal_row='<div class="form-group">%(label)s %(field)s%(help_text)s</div>',
             error_row='%s',

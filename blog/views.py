@@ -126,10 +126,16 @@ class DeleteComment(DeleteView):
     pk_url_kwarg = 'comment_id'
 
     def delete(self, request, *args, **kwargs):
-        return super(DeleteView, self).delete(request, args, kwargs)
+        print("442907672")
+        return super(DeleteComment, self).delete(request, *args, **kwargs)
 
-        # def render_to_response(self, context, **response_kwargs):
-        #     return HttpResponseRedirect(context['object'].article.get_absolute_url())
+    # 我还不知道怎么传递method＝delete所以我重写delete没屌用－ －，留坑
+    # http的method只能传送get
+    def render_to_response(self, context, **response_kwargs):
+        print ('get')
+        obj = self.get_object()
+        # obj.delete()#删除测试注释点
+        return HttpResponseRedirect(obj.article.get_absolute_url())
 
 
 class CommentPostView(FormView):
@@ -177,25 +183,16 @@ class CommentPostView2(FormView):
         })
 
 
-def none_page(request):
-    x = reverse('index')
-    print x
-    return HttpResponseRedirect(x)
-
-
 def saveFile(f):
     file = f.files['file']
     f = ficx()
     f.filex.save(file.name, file)
-    # i = get_storage_class()('blog/up_load_file')
-    # i.save(file.name, file)
 
 
 class upLoad(FormView):
     form_class = upfile
     context_object_name = 'form'
     template_name = 'blog/upLoadFile.html'
-
 
     def get(self, request, *args, **kwargs):
         form = self.get_form()
@@ -216,18 +213,7 @@ class upLoad(FormView):
         return HttpResponseRedirect(reverse("blog:uploadFile_List"))
 
 
-def csv_view(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=file_name.csv'  # 附加Content－Disposition协议头，包含文件名
-    writer = csv.writer(response)
-    writer.writerow(['First row', 'f', 'b', 'z'])
-    writer.writerow(['Second row', 'f', 'b', 'z', 'a', 'b', 'c'])
-    writer.writerow(['是'])
-    return response
-
-
-class uploadfile_list(ListView):
+class upLoadFile_list(ListView):
     model = ficx
     template_name = 'blog/file_list.html'
     context_object_name = 'file_list'
-

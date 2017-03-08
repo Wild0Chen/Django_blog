@@ -1,16 +1,11 @@
+{% load staticfiles %}
 <div class="comment">
     <div class="comment-main">
         <p class="head">详情</p>
         <form method="post" action="{% url 'blog:comment' article.pk %}">
             {% csrf_token %}
             <div class="row">
-
                 {{ form }}
-                <!--{% for field in form %}-->
-                <!--{{ field }}-->
-                <!--{{ field.errors }}-->
-                <!--<br>-->
-                <!--{% endfor %}-->
             </div>
             <button type="submit" class="comm-button">评论</button>
         </form>
@@ -18,19 +13,19 @@
         <hr>
         {% for comment in comment_list %}
         <div class="main-content">
-            <img src="月英1.jpg" class="user-avatar">
+            <img src="{% static 'blog/img/pic.png' %}" class="user-avatar">
             <span class="user-nickname">{{ comment.user_name }}</span>
             <tim class="time">{{ comment.create_time }}</tim>
             <div class="comment-content">
                 {{ comment.body }}
             </div>
-             <p>
-                 {{ comment.id }}
-                 <a href="{% url 'blog:comment_del' comment.id %}" methods="delete">删除</a>
-                 <br/>
-                 {% include 'blog/comment2.html' %}
-                 <!--<a href="{% url 'blog:comment2' comment.id %}">回复</a>-->
-             </p>
+            <p>
+                {{ comment.id }}
+                <a href="{% url 'blog:comment_del' comment.id %}" method="delete">删除</a>
+                <a href="{% url 'blog:comment_del' comment.id %}" method="delete">删除</a>
+                <br/>
+                <!--<a href="{% url 'blog:comment2' comment.id %}">回复</a>-->
+            </p>
         </div>
         <hr>
         {% endfor %}

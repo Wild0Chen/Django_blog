@@ -14,6 +14,5 @@ urlpatterns = [
     url(r'^article/comment2/(?P<comment_id>\d+)/$', views.CommentPostView2.as_view(), name='comment2'),
     url(r'^blog/del/(?P<comment_id>\d+)/$', views.DeleteComment.as_view(), name='comment_del'),
     url(r'^uploadfile/$', views.upLoad.as_view(), name='upLoadFile'),
-    url(r'^csv/$', views.csv_view, name='csv_view'),
-    url(r'^uploadfile_list/$', views.uploadfile_list.as_view(), name='upLoadFile_List'),
+    url(r'^uploadfile_list/$', views.upLoadFile_list.as_view(), name='upLoadFile_List'),
 ]
