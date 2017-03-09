@@ -15,6 +15,8 @@ urlpatterns = [
     url(r'^blog/del/(?P<comment_id>\d+)/$', views.DeleteComment.as_view(), name='comment_del'),
     url(r'^uploadfile/$', views.upLoad.as_view(), name='upLoadFile'),
     url(r'^uploadfile_list/$', views.upLoadFile_list.as_view(), name='upLoadFile_List'),
-    url(r'^singin/$',views.singIn.as_view(), name='singin'),#登陆
-    url(r'^singup/$',views.singUp.as_view(), name='singup'),#注册
+    url(r'^singin/$', views.singIn, name='singin'),  # 登陆
+    url(r'^singup/$', views.singUp.as_view(), name='singup'),  # 注册
+    url(r'^singup/(?P<refer_code>\d+)/$', views.singUp.as_view(), name='singup_refer'),  # 注册
+    url(r'^user_admin/(?P<user_id>\d+)/$', views.user_admin, name='user_admin'),  #推荐码注册
 ]

@@ -40,7 +40,9 @@ class IndexView(ListView):
     def get_queryset(self):
         article_list = Article.objects.filter(status='p')
         for article in article_list:
-            article.body = markdown2.markdown(article.body, extras=['fenced-code-blocks'], )
+            if article.abstract == '':
+                article.abstract = article.body[0:54]+'...'
+            article.body = markdown2.markdown(article.body, extras=['fenced-code-blocks'],)
         return article_list
 
     def get_context_data(self, **kwargs):
@@ -91,6 +93,8 @@ class TagView(ListView):
         article_list = Article.objects.filter(tags=self.kwargs['tag_id'], status='p')
         for article in article_list:
             article.body = markdown2.markdown(article.body, extras=['fenced-code-block'])
+            if article.abstract:
+                article.abstract = article.body[0:54]
         return article_list
 
     def get_context_data(self, **kwargs):
@@ -126,13 +130,11 @@ class DeleteComment(DeleteView):
     pk_url_kwarg = 'comment_id'
 
     def delete(self, request, *args, **kwargs):
-        print("442907672")
         return super(DeleteComment, self).delete(request, *args, **kwargs)
 
     # 我还不知道怎么传递method＝delete所以我重写delete没屌用－ －，留坑
     # http的method只能传送get
     def render_to_response(self, context, **response_kwargs):
-        print ('get')
         obj = self.get_object()
         # obj.delete()#删除测试注释点
         return HttpResponseRedirect(obj.article.get_absolute_url())
@@ -170,7 +172,6 @@ class CommentPostView2(FormView):
         comment.comment = target_comment
         comment.save()
         self.success_url = target_article.get_absolute_url()
-        print(comment.body)
         return HttpResponseRedirect(self.success_url)
 
     def form_invalid(self, form):
@@ -220,8 +221,10 @@ class upLoadFile_list(ListView):
 
 
 # 登陆
-class singIn(FormView):
-    pass
+# class singIn():
+
+def singIn(request):
+    return HttpResponse('to be continue');
 
 
 # 注册
@@ -232,7 +235,12 @@ class singUp(FormView):
 
     def get(self, request, *args, **kwargs):
         form = self.get_form()
-        return render(self.request, self.get_template_names(), context={'form_singup': form})
+        try:
+            refer_code = kwargs['refer_code']
+            return render(self.request, self.get_template_names(),
+                          context={'form_singup': form, 'refer_code': refer_code})
+        except Exception as e:
+            return render(self.request, self.get_template_names(), context={'form_singup': form})
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -251,4 +259,11 @@ class singUp(FormView):
         if not user.checkReferCode_and_add_score(self.referCoder):
             return render(self.request, self.get_template_names(), context={'form_singup': form, 'input_error': 1})
         user.save()
-        return HttpResponse('ok')
+        return HttpResponseRedirect(reverse('blog:user_admin', args=(user.id,)))
+
+
+# 保留给后面扩展继续使用
+def user_admin(request, user_id):
+    user = RegisterUsers.objects.get(pk=user_id)
+    referCode_url = 'http://' + request.META['HTTP_HOST'] + '/singup/' + str(user.referCode)
+    return render_to_response('blog/user_admin.html', context={'referCode_url': referCode_url})

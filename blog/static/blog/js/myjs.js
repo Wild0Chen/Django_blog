@@ -16,6 +16,12 @@ else if(href.indexOf('_list') != -1){
 else if(href.indexOf('uploadfile') != -1){
     id = document.getElementById('up');
 }
+else if(href.indexOf('singin') != -1){
+    id = document.getElementById('singin');
+}
+else if(href.indexOf('singup') != -1){
+    id = document.getElementById('singup');
+}
 
 id.className = 'active';
 

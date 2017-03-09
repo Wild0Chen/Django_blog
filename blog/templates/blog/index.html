@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 <!--<div id="banner" class="noselect"></div>-->
-
+<link rel="stylesheet" href="../../static/blog/css/style1.css">
 <div class="container">
     <div class="row">
-        <div class="col-lg-9">
+        <div class="col-lg-6">
             <div id="category" class="noselect">
                 <div id="category-title">
                     <ul>
                         <li>分类：</li>
                         {% for category in category_list %}
-                        <li class="cat-item"><a
+                        <li class=""><a
                                 href="{% url 'blog:category' category.pk %}">{{ category.name }}</a>
                         </li>
                         {% endfor %}
@@ -31,7 +31,6 @@
                         <div class="post-bd">
                             <!-- 	<p><a href=""><img src="" alt=""></a></p> -->
                             <p>{{ article.abstract }}</p>
-                            <p><a href="" class="more-link"></a></p>
                         </div>
                         <div class="post-ft">
                             <a href="{% url 'blog:detail' article.id %}" class="more">阅读全文>></a>

@@ -132,10 +132,12 @@ class RegisterUsers(models.Model):
         return num
 
     def checkReferCode_and_add_score(self, num):
+        if num == '':
+            return True
         try:
             user = RegisterUsers.objects.filter(referCode=num)[0]
             user.score += 100
             user.save()
             return True
-        except IndexError:
+        except:
             return False
