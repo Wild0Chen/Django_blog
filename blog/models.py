@@ -1,4 +1,5 @@
 # -*-coding:utf-8-*-#
+import random
 from collections import defaultdict
 
 from django.core.files.storage import FileSystemStorage, get_storage_class
@@ -110,3 +111,31 @@ class ficx(models.Model):
         if hasattr(self.filex, 'name'):
             return self.filex.name
         return 'None'
+
+
+class RegisterUsers(models.Model):
+    email = models.EmailField('邮箱', max_length=40, null=False, unique=True)
+    pwd = models.CharField('密码', max_length=20, null=False)
+    score = models.IntegerField(default=0)
+    referCode = models.IntegerField('推荐码', unique=True)
+
+    def __has_referCode(self, num):
+        if RegisterUsers.objects.filter(referCode=num):
+            return True
+        else:
+            return False
+
+    def get_referCode(self):
+        num = 0
+        while 0 == num or self.__has_referCode(num):
+            num = random.randint(1000, 9999)
+        return num
+
+    def checkReferCode_and_add_score(self, num):
+        try:
+            user = RegisterUsers.objects.filter(referCode=num)[0]
+            user.score += 100
+            user.save()
+            return True
+        except IndexError:
+            return False

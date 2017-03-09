@@ -20,8 +20,8 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, DeleteView
 
 from mysite import settings
-from .forms import BlogCommentForm, BlogCommentForm2, upfile
-from .models import Article, Category, Tag, BlogComment, ficx
+from .forms import BlogCommentForm, BlogCommentForm2, upfile, RegUserForm
+from .models import Article, Category, Tag, BlogComment, ficx, RegisterUsers
 from django.views.generic.list import ListView, BaseListView
 import markdown2
 
@@ -210,10 +210,45 @@ class upLoad(FormView):
 
     def form_valid(self, form):
         saveFile(form)
-        return HttpResponseRedirect(reverse("blog:uploadFile_List"))
+        return HttpResponseRedirect(reverse("blog:upLoadFile_List"))
 
 
 class upLoadFile_list(ListView):
     model = ficx
     template_name = 'blog/file_list.html'
     context_object_name = 'file_list'
+
+
+# 登陆
+class singIn(FormView):
+    pass
+
+
+# 注册
+class singUp(FormView):
+    form_class = RegUserForm
+    context_object_name = 'form_singup'
+    template_name = 'blog/singup.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.get_form()
+        return render(self.request, self.get_template_names(), context={'form_singup': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        self.referCoder = request.POST['referCode']
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        return render(self.request, self.get_template_names(), context={'form_singup': form})
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.referCode = user.get_referCode()
+        if not user.checkReferCode_and_add_score(self.referCoder):
+            return render(self.request, self.get_template_names(), context={'form_singup': form, 'input_error': 1})
+        user.save()
+        return HttpResponse('ok')

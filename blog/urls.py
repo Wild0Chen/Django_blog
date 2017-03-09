@@ -15,4 +15,6 @@ urlpatterns = [
     url(r'^blog/del/(?P<comment_id>\d+)/$', views.DeleteComment.as_view(), name='comment_del'),
     url(r'^uploadfile/$', views.upLoad.as_view(), name='upLoadFile'),
     url(r'^uploadfile_list/$', views.upLoadFile_list.as_view(), name='upLoadFile_List'),
+    url(r'^singin/$',views.singIn.as_view(), name='singin'),#登陆
+    url(r'^singup/$',views.singUp.as_view(), name='singup'),#注册
 ]
