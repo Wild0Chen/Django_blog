@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="jumbotron container">
-    <form method="post" action="{% url 'blog:singup' %}" class="container">
+<div class="jumbotron zeroBot">
+    <form method="post" action="{% url 'blog:singup' %}" >
         <div class="container">
-            <div class="col-md-4"></div>
-            <div class="col-md-4">
+            <div class="col-md-4" id="mg">
                 {% csrf_token %}
                 {{ form_singup.as_div }}
                 <div class="form-group">
@@ -15,13 +14,13 @@
                     </ul>
                     {% endif %}
                     <label>推荐码:</label>
-                        <input id='ip1' class="form-control" type="tel" name="referCode" placeholder="可以为空" value="{{ refer_code|safe }}">
+                    <input id='ip1' class="form-control center-block" type="tel" name="referCode" placeholder="可以为空"
+                           value="{{ refer_code|safe }}">
                 </div>
-                <div class="container">
-                    <div class="col-md-4"></div>
-                        <button type="submit" class="btn btn-default btn-primary">
-                            <span class="glyphicon glyphicon-cloud" aria-hidden="true"></span> 注册
-                        </button>
+                <div class="container ">
+                    <button type="submit" class="btn btn-default btn-primary">
+                        <span class="glyphicon glyphicon-cloud" aria-hidden="true"></span> 注册
+                    </button>
                 </div>
             </div>
         </div>

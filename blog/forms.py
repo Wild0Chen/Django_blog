@@ -5,7 +5,17 @@ from django.core.files.uploadedfile import UploadedFile
 from .models import BlogComment, BlogComment2, RegisterUsers
 
 
-class BlogCommentForm(forms.ModelForm):
+class AsDivBlock:
+    def as_div(self):
+        return self._html_output(
+            normal_row='<div class="form-group">%(label)s %(field)s%(help_text)s</div>',
+            error_row='%s',
+            row_ender='</div>',
+            help_text_html=' <span class="helptext">%s</span>',
+            errors_on_separate_row=True)
+
+
+class BlogCommentForm(AsDivBlock, forms.ModelForm):
     class Meta:
         model = BlogComment
         fields = ['user_name', 'user_email', 'body']
@@ -13,14 +23,12 @@ class BlogCommentForm(forms.ModelForm):
             'user_name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': '昵称',
-                'aria-describedby': 'sizing-addon1',
             }),
             'user_email': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': '邮箱',
-                'aria-describedby': 'sizing-addon1',
             }),
-            'body': forms.Textarea(attrs={'placeholder': 'i say~'}),
+            'body': forms.Textarea(attrs={'class':'form-control', 'placeholder': 'i say~'}),
         }
 
 
@@ -31,16 +39,6 @@ class BlogCommentForm2(forms.ModelForm):
         widgets = {
             'body': forms.Textarea(attrs={'placeholder': 'i say2~'}),
         }
-
-
-class AsDivBlock:
-    def as_div(self):
-        return self._html_output(
-            normal_row='<div class="form-group">%(label)s %(field)s%(help_text)s</div>',
-            error_row='%s',
-            row_ender='</div>',
-            help_text_html=' <span class="helptext">%s</span>',
-            errors_on_separate_row=True)
 
 
 class upfile(AsDivBlock, forms.Form):
@@ -58,7 +56,7 @@ class upfile(AsDivBlock, forms.Form):
     #         errors_on_separate_row=True)
 
 
-class RegUserForm(forms.ModelForm):
+class RegUserForm(AsDivBlock, forms.ModelForm):
     class Meta:
         model = RegisterUsers
         # fields = ['邮箱', '密码', '推荐码']
@@ -71,11 +69,3 @@ class RegUserForm(forms.ModelForm):
             'email': {'required': "用户名不能为空", 'unique': '用户名不能重复'},
             'pwd': {'required': "密码不能为空"},
         }
-
-    def as_div(self):
-        return self._html_output(
-            normal_row='<div class="form-group">%(label)s %(field)s%(help_text)s</div>',
-            error_row='%s',
-            row_ender='</div>',
-            help_text_html=' <span class="helptext">%s</span>',
-            errors_on_separate_row=True)

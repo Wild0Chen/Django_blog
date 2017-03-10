@@ -1,33 +1,38 @@
 {% load staticfiles %}
-<div class="comment">
-    <div class="comment-main">
-        <p class="head">详情</p>
-        <form method="post" action="{% url 'blog:comment' article.pk %}">
-            {% csrf_token %}
-            <div class="row">
-                {{ form }}
-            </div>
-            <button type="submit" class="comm-button">评论</button>
-        </form>
-        <p class="comment-count">共{{ 0 }} 评论
-        <hr>
-        {% for comment in comment_list %}
-        <div class="main-content">
-            <img src="{% static 'blog/img/pic.png' %}" class="user-avatar">
-            <span class="user-nickname">{{ comment.user_name }}</span>
-            <tim class="time">{{ comment.create_time }}</tim>
-            <div class="comment-content">
-                {{ comment.body }}
-            </div>
-            <p>
-                {{ comment.id }}
-                <a href="{% url 'blog:comment_del' comment.id %}" method="delete">删除</a>
-                <a href="{% url 'blog:comment_del' comment.id %}" method="delete">删除</a>
-                <br/>
-                <!--<a href="{% url 'blog:comment2' comment.id %}">回复</a>-->
-            </p>
+<div class="container">
+    <form method="post" action="{% url 'blog:comment' article.pk %}" id="comment_form">
+        {% csrf_token %}
+        <div class="">
+            {{ form.as_div }}
         </div>
-        <hr>
-        {% endfor %}
+        <ul class="list-inline">
+            <li>
+                <button class="btn btn-primary" type="submit" class="comm-button">评论</button>
+            </li>
+            <li>
+                <p class="text-right">共{{ comment_list|length }}条评论</p>
+            </li>
+        </ul>
+    </form>
+    <hr>
+    {% for comment in comment_list %}
+    <img src="{% static 'blog/img/pic.png' %}">
+    <p>{{forloop.counter}}楼<br><span class="user-nickname">{{ comment.user_name }}:</span></p>
+    <div class="block-shadow">
+        <br>
+        {{ comment.body }}
+        <br>
+        <div>
+            <p class="text-right">{{ comment.create_tim|date:"Y年n月d日" }}</p>
+        </div>
+        <p class="text-right">
+            <!--js实现-->
+            <!--<a href="##">回复</a>-->
+            <a href="{% url 'blog:comment_del' comment.id %}">删除</a>
+            <br/>
+        </p>
     </div>
+    <hr>
+    {% endfor %}
 </div>
+
