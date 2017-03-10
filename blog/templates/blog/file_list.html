@@ -6,15 +6,14 @@
     </h1>
 </div>
 <div class="container center-block">
-    <div class="row">
-        {% for i in file_list %}
-        <div class="col-sm-6 com-md-3">
-            <a href="{{ i.filex.url }}" class="thumbnail"  title="点击看大图">
-                <img src="{{ i.filex.url }}" alt="i.filex.name">
-            </a>
-        </div>
-        {% endfor %}
+    {% for i in file_list %}
+    <div class="col-sm-6 com-md-3">
+        <a href="{{ i.filex.url }}" class="thumbnail" title="点击看大图">
+            <img src="{{ i.filex.url }}" alt="i.filex.name">
+        </a>
+        <a href="{% url 'blog:file_del' i.id %}" class="img_file_del">删除</a>
     </div>
+    {% endfor %}
 </div>
 
 {% endblock %}

@@ -139,6 +139,14 @@ class DeleteComment(DeleteView):
         # obj.delete()#删除测试注释点
         return HttpResponseRedirect(obj.article.get_absolute_url())
 
+class File_del(DeleteView):
+    model = ficx
+    pk_url_kwarg = 'file_id'
+
+    def render_to_response(self, context, **response_kwargs):
+        obj = self.get_object()
+        obj.delete()#删除测试注释点
+        return HttpResponseRedirect(reverse('blog:upLoadFile_List'))
 
 class CommentPostView(FormView):
     form_class = BlogCommentForm
