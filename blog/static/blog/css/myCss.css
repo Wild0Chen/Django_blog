@@ -61,8 +61,8 @@
 }
 
 #mg {
-    margin-left: 33.3333333%;
-    margin-right: 33.3333333%;
+    /*margin-left: 33.3333333%;*/
+    /*margin-right: 33.3333333%;*/
 }
 
 @media (max-width: 768px) {
@@ -105,4 +105,11 @@ body{
 
 textarea.form-control{
     width:100%;
+}
+
+
+.form-sing-x{
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
 }

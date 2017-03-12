@@ -1,6 +1,7 @@
 # coding:utf-8
 from django import forms
 from django.core.files.uploadedfile import UploadedFile
+from django.forms.utils import ErrorList
 
 from .models import BlogComment, BlogComment2, RegisterUsers
 

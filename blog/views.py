@@ -1,6 +1,8 @@
 # -*-coding:utf-8-*-#
 import sys
 
+from django.forms.utils import ErrorList
+
 sys.path.append('../')
 import csv
 from django.conf.global_settings import MEDIA_ROOT
@@ -235,6 +237,8 @@ def singIn(request):
     return HttpResponse('to be continue');
 
 
+class ela(ErrorList):
+    error_class = 'memeda'
 # 注册
 class singUp(FormView):
     form_class = RegUserForm
@@ -252,6 +256,7 @@ class singUp(FormView):
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
+        form.error_class =ela
         self.referCoder = request.POST['referCode']
         if form.is_valid():
             return self.form_valid(form)
