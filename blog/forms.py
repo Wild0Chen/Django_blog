@@ -80,7 +80,7 @@ class Error_list(ErrorList):
 class RegUserForm(AsDivBlock, forms.ModelForm):
     required_css_class = 'form-group sr-only'
     # required不能再Meta中指定
-    referCode = forms.IntegerField(label='推荐码', required=False,
+    referCode = forms.IntegerField(label=False, required=False,
                                    widget=forms.NumberInput(attrs={'class': 'form-control center-block',
                                                                    'type': 'tel', 'name': 'referCode',
                                                                    'placeholder': '推荐码,可以为空'}))
