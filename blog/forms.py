@@ -9,7 +9,7 @@ from .models import BlogComment, BlogComment2, RegisterUsers, ficx
 class AsDivBlock:
     def as_div(self):
         return self._html_output(
-            normal_row='<div %(html_class_attr)s>%(label)s %(field)s%(help_text)s</div>',
+            normal_row='<div class="form-group">%(label)s %(field)s%(help_text)s</div>',
             error_row='%s',
             row_ender='</div>',
             help_text_html=' <span class="helptext">%s</span>',
@@ -61,7 +61,7 @@ class upfile(AsDivBlock, forms.ModelForm):
         }
 
 
-#重置errorList，添加自定义的class类型 同时可以重载到as_div上，将错误改成div
+# 重置errorList，添加自定义的class类型 同时可以重载到as_div上，将错误改成div
 class Error_list(ErrorList):
     def __init__(self, initlist=None, error_class=None):
         super(Error_list, self).__init__(initlist, error_class='yes')
@@ -78,15 +78,20 @@ class Error_list(ErrorList):
 
 
 class RegUserForm(AsDivBlock, forms.ModelForm):
-    required_css_class = 'form-group'
-    referCode = forms.IntegerField(label='推荐码', required=False, widget=forms.NumberInput(attrs={
-        'class': 'form-control center-block', 'type': 'tel', 'name': 'referCode', 'placeholder': '可以为空'}))
+    required_css_class = 'form-group sr-only'
+    # required不能再Meta中指定
+    referCode = forms.IntegerField(label='推荐码', required=False,
+                                   widget=forms.NumberInput(attrs={'class': 'form-control center-block',
+                                                                   'type': 'tel', 'name': 'referCode',
+                                                                   'placeholder': '推荐码,可以为空'}))
 
     class Meta:
         model = RegisterUsers
         fields = ['email', 'pwd', 'referCode']
         widgets = {
-            'email': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'name@example.com'}),
+            'email': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'name@example.com',
+                       'type': 'email', 'autofocus': 'true'}),
             'pwd': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '********'}),
         }
         error_messages = {
