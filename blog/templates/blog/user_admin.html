@@ -1,6 +1,19 @@
 {% extends 'base.html' %}}
 {% block content %}
 <div class="jumbotron">
+    {% if referCode_url %}
     <p>你的推荐链接为：<a href="{{ referCode_url }}">{{ referCode_url}}</a></p>
+    <ul class="text-left">
+        <li><p>用户编号:{{ user.id }}</p></li>
+        <li><p>邮箱:{{ user.email }}</p></li>
+        <li><p>积分:{{ user.score }}</p></li>
+        <li><p>推荐码:{{ user.refer }}</p></li>
+        <li><p>密码:{{ user.pwd }}</p></li>
+    </ul>
+    {% endif %}
+    {% if back_url %}
+    <h1>To Be continue</h1>
+        <a class="btn btn-default btn-primary" href="{% url 'blog:singup' %}">返回</a>
+    {% endif %}
 </div>
 {% endblock %}}

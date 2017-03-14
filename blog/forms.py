@@ -3,13 +3,13 @@ from django import forms
 from django.core.files.uploadedfile import UploadedFile
 from django.forms.utils import ErrorList
 
-from .models import BlogComment, BlogComment2, RegisterUsers
+from .models import BlogComment, BlogComment2, RegisterUsers, ficx
 
 
 class AsDivBlock:
     def as_div(self):
         return self._html_output(
-            normal_row='<div class="form-group">%(label)s %(field)s%(help_text)s</div>',
+            normal_row='<div %(html_class_attr)s>%(label)s %(field)s%(help_text)s</div>',
             error_row='%s',
             row_ender='</div>',
             help_text_html=' <span class="helptext">%s</span>',
@@ -17,6 +17,8 @@ class AsDivBlock:
 
 
 class BlogCommentForm(AsDivBlock, forms.ModelForm):
+    required_css_class = 'form-group'
+
     class Meta:
         model = BlogComment
         fields = ['user_name', 'user_email', 'body']
@@ -29,7 +31,7 @@ class BlogCommentForm(AsDivBlock, forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': '邮箱',
             }),
-            'body': forms.Textarea(attrs={'class':'form-control', 'placeholder': 'i say~'}),
+            'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'i say~'}),
         }
 
 
@@ -42,26 +44,47 @@ class BlogCommentForm2(forms.ModelForm):
         }
 
 
-class upfile(AsDivBlock, forms.Form):
+class upfile(AsDivBlock, forms.ModelForm):
     title = forms.CharField(max_length=50, label_suffix=':', label='自定义文件名-没用', required=False,
                             widget=forms.TextInput(attrs={'class': 'form-control',
                                                           'placeholder': '可以为空'}))
-    file = forms.FileField(label='选择文件', label_suffix=':', error_messages={'required': '文件不能为空'})
 
-    # def as_div(self):
-    #     return self._html_output(
-    #         normal_row='<div class="form-group">%(label)s %(field)s%(help_text)s</div>',
-    #         error_row='%s',
-    #         row_ender='</div>',
-    #         help_text_html=' <span class="helptext">%s</span>',
-    #         errors_on_separate_row=True)
+    # file = forms.FileField(label='选择文件', label_suffix=':', error_messages={'required': '文件不能为空'})
+    class Meta:
+        model = ficx
+        fields = ['title', 'filex']
+        error_messages = {
+            'filex': {'required': "文件不能为空"},
+        }
+        labels = {
+            'filex': '选择文件',
+        }
+
+
+#重置errorList，添加自定义的class类型 同时可以重载到as_div上，将错误改成div
+class Error_list(ErrorList):
+    def __init__(self, initlist=None, error_class=None):
+        super(Error_list, self).__init__(initlist, error_class='yes')
+
+    def __str__(self):
+        return self.as_div()
+
+    def __unicode__(self):
+        return self.as_div()
+
+    def as_div(self):
+        if not self: return ''
+        return '<div class="ist fky">%s</div>' % ''.join(['<div class="error">%s</div>' % e for e in self])
 
 
 class RegUserForm(AsDivBlock, forms.ModelForm):
+    required_css_class = 'form-group'
+    referCode = forms.IntegerField(label='推荐码', required=False, widget=forms.NumberInput(attrs={
+        'class': 'form-control center-block', 'type': 'tel', 'name': 'referCode', 'placeholder': '可以为空'}))
+
     class Meta:
         model = RegisterUsers
-        # fields = ['邮箱', '密码', '推荐码']
-        fields = ['email', 'pwd']
+        fields = ['email', 'pwd', 'referCode']
         widgets = {
             'email': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'name@example.com'}),
             'pwd': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '********'}),

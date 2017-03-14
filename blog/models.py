@@ -129,10 +129,10 @@ class RegisterUsers(models.Model):
         num = 0
         while 0 == num or self.__has_referCode(num):
             num = random.randint(1000, 9999)
-        return num
+        self.referCode = num
 
     def checkReferCode_and_add_score(self, num):
-        if num == '':
+        if num == None:
             return True
         try:
             user = RegisterUsers.objects.filter(referCode=num)[0]
@@ -141,3 +141,4 @@ class RegisterUsers(models.Model):
             return True
         except:
             return False
+

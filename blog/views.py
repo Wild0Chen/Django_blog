@@ -22,7 +22,7 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, DeleteView
 
 from mysite import settings
-from .forms import BlogCommentForm, BlogCommentForm2, upfile, RegUserForm
+from .forms import BlogCommentForm, BlogCommentForm2, upfile, RegUserForm, Error_list
 from .models import Article, Category, Tag, BlogComment, ficx, RegisterUsers
 from django.views.generic.list import ListView, BaseListView
 import markdown2
@@ -43,8 +43,8 @@ class IndexView(ListView):
         article_list = Article.objects.filter(status='p')
         for article in article_list:
             if article.abstract == '':
-                article.abstract = article.body[0:54]+'...'
-            article.body = markdown2.markdown(article.body, extras=['fenced-code-blocks'],)
+                article.abstract = article.body[0:54] + '...'
+            article.body = markdown2.markdown(article.body, extras=['fenced-code-blocks'], )
         return article_list
 
     def get_context_data(self, **kwargs):
@@ -141,14 +141,16 @@ class DeleteComment(DeleteView):
         # obj.delete()#删除测试注释点
         return HttpResponseRedirect(obj.article.get_absolute_url())
 
+
 class File_del(DeleteView):
     model = ficx
     pk_url_kwarg = 'file_id'
 
     def render_to_response(self, context, **response_kwargs):
         obj = self.get_object()
-        obj.delete()#删除测试注释点
+        obj.delete()  # 删除测试注释点
         return HttpResponseRedirect(reverse('blog:upLoadFile_List'))
+
 
 class CommentPostView(FormView):
     form_class = BlogCommentForm
@@ -194,12 +196,6 @@ class CommentPostView2(FormView):
         })
 
 
-def saveFile(f):
-    file = f.files['file']
-    f = ficx()
-    f.filex.save(file.name, file)
-
-
 class upLoad(FormView):
     form_class = upfile
     context_object_name = 'form'
@@ -220,7 +216,11 @@ class upLoad(FormView):
         return render(self.request, self.get_template_names(), context={'form': form})
 
     def form_valid(self, form):
-        saveFile(form)
+        UpFile = form.save(commit=False)
+        UpFile.save()
+        # file = form.files['file']
+        # f = ficx()
+        # f.filex.save(file.name, file)
         return HttpResponseRedirect(reverse("blog:upLoadFile_List"))
 
 
@@ -233,31 +233,60 @@ class upLoadFile_list(ListView):
 # 登陆
 # class singIn():
 
-def singIn(request):
-    return HttpResponse('to be continue');
+class SingIn(FormView):
+    form_class = RegUserForm
+    user_id = None
+
+    def get(self, request, *args, **kwargs):
+        form = self.get_form()
+        form.fields.pop('referCode')  # 不要推荐码
+        return render(request, 'blog/singin.html', context={'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        form.fields.pop('referCode')  # 去掉推荐码
+        if self.check_valid(form):
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        return HttpResponseRedirect(reverse('blog:user_admin', args=(self.user_id,)))
+
+    def form_invalid(self, form):
+        if form['email'].value():
+            form.errors['email'] = ['用户名或者密码错误']
+        return render(self.request, 'blog/singin.html', context={'form': form})
+
+    def check_valid(self, form):
+        if not form['pwd'].value(): return False  # 没密码就不检查后面
+        email = form['email'].value()
+        users = RegisterUsers.objects.filter(email=email)
+        if not users: return False
+        user = users[0]
+        self.user_id = user.pk
+        return form['pwd'].value() == user.pwd
 
 
-class ela(ErrorList):
-    error_class = 'memeda'
 # 注册
-class singUp(FormView):
+class SingUp(FormView):
     form_class = RegUserForm
     context_object_name = 'form_singup'
     template_name = 'blog/singup.html'
 
     def get(self, request, *args, **kwargs):
-        form = self.get_form()
+        form = self.get_form_class()
         try:
-            refer_code = kwargs['refer_code']
-            return render(self.request, self.get_template_names(),
-                          context={'form_singup': form, 'refer_code': refer_code})
-        except Exception as e:
+            form.initial['referCode'] = kwargs['refer_code']  # 如果有推荐码使用initial对他进行初始化
+            # 如果form是绑定的那么form['key'].value()給的是data中的值，如果未绑定则给initial中的值
+            # form['key'].field==form.fields['key']
+            # field.form-》form
+        finally:
             return render(self.request, self.get_template_names(), context={'form_singup': form})
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
-        form.error_class =ela
-        self.referCoder = request.POST['referCode']
+        form.error_class = Error_list
         if form.is_valid():
             return self.form_valid(form)
         else:
@@ -268,8 +297,8 @@ class singUp(FormView):
 
     def form_valid(self, form):
         user = form.save(commit=False)
-        user.referCode = user.get_referCode()
-        if not user.checkReferCode_and_add_score(self.referCoder):
+        user.get_referCode()
+        if not user.checkReferCode_and_add_score(form.cleaned_data['referCode']):
             return render(self.request, self.get_template_names(), context={'form_singup': form, 'input_error': 1})
         user.save()
         return HttpResponseRedirect(reverse('blog:user_admin', args=(user.id,)))
@@ -279,4 +308,4 @@ class singUp(FormView):
 def user_admin(request, user_id):
     user = RegisterUsers.objects.get(pk=user_id)
     referCode_url = 'http://' + request.META['HTTP_HOST'] + '/singup/' + str(user.referCode)
-    return render_to_response('blog/user_admin.html', context={'referCode_url': referCode_url})
+    return render_to_response('blog/user_admin.html', context={'referCode_url': referCode_url, 'user': user})

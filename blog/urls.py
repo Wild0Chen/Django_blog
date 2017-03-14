@@ -16,8 +16,8 @@ urlpatterns = [
     url(r'^uploadfile/$', views.upLoad.as_view(), name='upLoadFile'),
     url(r'^uploadfile_list/$', views.upLoadFile_list.as_view(), name='upLoadFile_List'),
     url(r'^uploadfile_list/(?P<file_id>\d+)/$', views.File_del.as_view(), name='file_del'),
-    url(r'^singin/$', views.singIn, name='singin'),  # 登陆
-    url(r'^singup/$', views.singUp.as_view(), name='singup'),  # 注册
-    url(r'^singup/(?P<refer_code>\d+)/$', views.singUp.as_view(), name='singup_refer'),  # 注册
+    url(r'^singin/$', views.SingIn.as_view(), name='singin'),  # 登陆
+    url(r'^singup/$', views.SingUp.as_view(), name='singup'),  # 注册
+    url(r'^singup/(?P<refer_code>\d+)/$', views.SingUp.as_view(), name='singup_refer'),  # 注册
     url(r'^user_admin/(?P<user_id>\d+)/$', views.user_admin, name='user_admin'),  #推荐码注册
 ]

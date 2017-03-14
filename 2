@@ -1,0 +1,23 @@
+class a(object):
+    def go(self):
+        print('a')
+
+class f(object):
+    def go(self):
+        print('f')
+
+class b(a):
+    def go(self):
+        super(b, self).go()
+        # print('b')
+
+class c(f):
+    def go(self):
+        super(c, self).go()
+        # print('c')
+
+class d(b,c):
+    def go(self):
+        super(d, self).go()
+        # print('d')
+
