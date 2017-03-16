@@ -80,14 +80,14 @@ class Error_list(ErrorList):
 class RegUserForm(AsDivBlock, forms.ModelForm):
     required_css_class = 'form-group sr-only'
     # required不能再Meta中指定
-    referCode = forms.IntegerField(label=False, required=False,
+    referCoder = forms.IntegerField(label=False, required=False,#推荐码
                                    widget=forms.NumberInput(attrs={'class': 'form-control center-block',
                                                                    'type': 'tel', 'name': 'referCode',
                                                                    'placeholder': '推荐码,可以为空'}))
-
+#__new__会改变成员的接口形式为OrderDict，细节不用看
     class Meta:
         model = RegisterUsers
-        fields = ['email', 'pwd', 'referCode']
+        fields = ['email', 'pwd']
         widgets = {
             'email': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'name@example.com',

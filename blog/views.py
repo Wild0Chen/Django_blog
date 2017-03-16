@@ -1,6 +1,7 @@
 # -*-coding:utf-8-*-#
 import sys
 
+from django.forms.extras import SelectDateWidget
 from django.forms.utils import ErrorList
 
 sys.path.append('../')
@@ -8,7 +9,7 @@ import csv
 from django.conf.global_settings import MEDIA_ROOT
 from django.core.files.storage import FileSystemStorage, DefaultStorage, default_storage, get_storage_class, Storage
 from django.core.urlresolvers import reverse
-from django.forms import forms
+from django.forms import forms, DateField
 from django.http import HttpResponse
 from django.http import HttpResponseForbidden
 from django.http import HttpResponseNotModified
@@ -121,10 +122,10 @@ class ArchiveView(ListView):
         return super(ArchiveView, self).get_context_data(**kwargs)
 
 
-def test(request):
-    comment = get_object_or_404(BlogComment, pk='comment_id')
-    comment.delete()
-    return HttpResponseRedirect(comment.article.get_absolute_url())
+# def test(request):
+#     comment = get_object_or_404(BlogComment, pk='comment_id')
+#     comment.delete()
+#     return HttpResponseRedirect(comment.article.get_absolute_url())
 
 
 class DeleteComment(DeleteView):
@@ -216,9 +217,9 @@ class upLoad(FormView):
         return render(self.request, self.get_template_names(), context={'form': form})
 
     def form_valid(self, form):
-        UpFile = form.save(commit=False)
-        UpFile.save()
-        # file = form.files['file']
+        up_file = form.save(commit=False)
+        up_file.save()
+        # file = form.files['file']#废弃,使用modelForm方式继承，不需要再使用通过创建模型的方式save
         # f = ficx()
         # f.filex.save(file.name, file)
         return HttpResponseRedirect(reverse("blog:upLoadFile_List"))
@@ -277,7 +278,7 @@ class SingUp(FormView):
     def get(self, request, *args, **kwargs):
         form = self.get_form_class()
         try:
-            form.initial['referCode'] = kwargs['refer_code']  # 如果有推荐码使用initial对他进行初始化
+            form.initial['referCoder'] = kwargs['refer_code']  # 如果有推荐码使用initial对他进行初始化
             # 如果form是绑定的那么form['key'].value()給的是data中的值，如果未绑定则给initial中的值
             # form['key'].field==form.fields['key']
             # field.form-》form
@@ -298,7 +299,7 @@ class SingUp(FormView):
     def form_valid(self, form):
         user = form.save(commit=False)
         user.get_referCode()
-        if not user.checkReferCode_and_add_score(form.cleaned_data['referCode']):
+        if not user.checkReferCode_and_add_score(form.cleaned_data['referCoder']):
             return render(self.request, self.get_template_names(), context={'form_singup': form, 'input_error': 1})
         user.save()
         return HttpResponseRedirect(reverse('blog:user_admin', args=(user.id,)))
@@ -309,3 +310,4 @@ def user_admin(request, user_id):
     user = RegisterUsers.objects.get(pk=user_id)
     referCode_url = 'http://' + request.META['HTTP_HOST'] + '/singup/' + str(user.referCode)
     return render_to_response('blog/user_admin.html', context={'referCode_url': referCode_url, 'user': user})
+
