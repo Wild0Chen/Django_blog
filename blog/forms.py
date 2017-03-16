@@ -1,6 +1,5 @@
 # coding:utf-8
 from django import forms
-from django.core.files.uploadedfile import UploadedFile
 from django.forms.utils import ErrorList
 
 from .models import BlogComment, BlogComment2, RegisterUsers, ficx
@@ -62,9 +61,9 @@ class upfile(AsDivBlock, forms.ModelForm):
 
 
 # 重置errorList，添加自定义的class类型 同时可以重载到as_div上，将错误改成div
-class Error_list(ErrorList):
-    def __init__(self, initlist=None, error_class=None):
-        super(Error_list, self).__init__(initlist, error_class='yes')
+class ErrorListCfg(ErrorList):
+    def __init__(self, initlist=None):
+        super(ErrorListCfg, self).__init__(initlist, error_class='yes')
 
     def __str__(self):
         return self.as_div()
@@ -80,11 +79,12 @@ class Error_list(ErrorList):
 class RegUserForm(AsDivBlock, forms.ModelForm):
     required_css_class = 'form-group sr-only'
     # required不能再Meta中指定
-    referCoder = forms.IntegerField(label=False, required=False,#推荐码
-                                   widget=forms.NumberInput(attrs={'class': 'form-control center-block',
-                                                                   'type': 'tel', 'name': 'referCode',
-                                                                   'placeholder': '推荐码,可以为空'}))
-#__new__会改变成员的接口形式为OrderDict，细节不用看
+    referCoder = forms.IntegerField(label=False, required=False,  # 推荐码
+                                    widget=forms.NumberInput(attrs={'class': 'form-control center-block',
+                                                                    'type': 'tel', 'name': 'referCode',
+                                                                    'placeholder': '推荐码,可以为空'}))
+
+    # __new__会改变成员的接口形式为OrderDict，细节不用看
     class Meta:
         model = RegisterUsers
         fields = ['email', 'pwd']
@@ -98,3 +98,27 @@ class RegUserForm(AsDivBlock, forms.ModelForm):
             'email': {'required': "用户名不能为空", 'unique': '用户名不能重复'},
             'pwd': {'required': "密码不能为空"},
         }
+
+
+# meta这些东西会在fields中以OrderDict的形式存在，渲染的时候调用他们对应的field中的clean生成检查数据正确性
+# 如果错误那么会通过抛出ValidationError,通过add_eeror添加到error_message中，使用ErrorList渲染
+# 在他调用__str__的时候进行渲染
+# getitem被重载掉了返回的是bound_fields_cache中的值它与fields中一样
+# bound 中有一个form指回这个form
+# 只有Is_bound 和 errors为空时候is_vaild为TRUE，那么说明只有form是bound的情况下才可行
+# fields不为空只有在data有值的时候is_bound为true
+# 在viewForm中在get_form的时候会从request中自动取出一些值传递给viewForm绑定的form_class，生成绑定的form数据，并且验证他的有效性
+# 在form中有一个errors的东西是对self._selfs装饰而来的，在其内部会执行full_clean  -->到第二天处执行
+
+#偷懒的方法
+class RegUserFormIn(RegUserForm):
+    referCoder = None#取消掉父类的属性
+
+    class Meta(RegUserForm.Meta):
+        fields = ['email', 'pwd']
+        exclude = ['referCode']
+# 如果上面的referCoder是在Meta中的，那么我可以通过这种形式对他排除
+#或者将referCoder进行空引用
+#如果不想继承在form。fields中去掉它也可以，因为它不是表单必须数据，且它不是require数据
+#不是required的表单数据是可以不完整提交的
+# form.fields.pop('referCoder')  # 去掉推荐码

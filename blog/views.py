@@ -5,27 +5,15 @@ from django.forms.extras import SelectDateWidget
 from django.forms.utils import ErrorList
 
 sys.path.append('../')
-import csv
-from django.conf.global_settings import MEDIA_ROOT
-from django.core.files.storage import FileSystemStorage, DefaultStorage, default_storage, get_storage_class, Storage
 from django.core.urlresolvers import reverse
-from django.forms import forms, DateField
-from django.http import HttpResponse
-from django.http import HttpResponseForbidden
-from django.http import HttpResponseNotModified
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404, render_to_response, redirect
-from django.template import Context
-from django.template.loader import get_template
-from django.template.response import TemplateResponse, SimpleTemplateResponse
+from django.shortcuts import render, get_object_or_404, render_to_response
 from django.views.generic import DetailView
-from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, DeleteView
 
-from mysite import settings
-from .forms import BlogCommentForm, BlogCommentForm2, upfile, RegUserForm, Error_list
+from .forms import BlogCommentForm, BlogCommentForm2, upfile, RegUserForm, RegUserFormIn, ErrorListCfg
 from .models import Article, Category, Tag, BlogComment, ficx, RegisterUsers
-from django.views.generic.list import ListView, BaseListView
+from django.views.generic.list import ListView
 import markdown2
 
 
@@ -156,9 +144,10 @@ class File_del(DeleteView):
 class CommentPostView(FormView):
     form_class = BlogCommentForm
     template_name = 'blog/detail.html'
+    pu_url_kwarg = 'article_id'
 
     def form_valid(self, form):
-        target_article = get_object_or_404(Article, pk=self.kwargs['article_id'])
+        target_article = get_object_or_404(Article, pk=self.kwargs.get(self.pk_url_kwarg, None))
         comment = form.save(commit=False)
         comment.article = target_article
         comment.save()
@@ -219,7 +208,11 @@ class upLoad(FormView):
     def form_valid(self, form):
         up_file = form.save(commit=False)
         up_file.save()
-        # file = form.files['file']#废弃,使用modelForm方式继承，不需要再使用通过创建模型的方式save
+        #废弃,使用modelForm方式继承，不需要再使用通过创建模型的方式save
+        #保留这段注释，原来form从forms.Form继承，现在是从ModelForm继承，
+        #体现出两种继承方式中save的区别
+        #modelform中直接创建model对象直接save，Form需要自己创建并初始化它
+        # file = form.files['file']
         # f = ficx()
         # f.filex.save(file.name, file)
         return HttpResponseRedirect(reverse("blog:upLoadFile_List"))
@@ -232,20 +225,16 @@ class upLoadFile_list(ListView):
 
 
 # 登陆
-# class singIn():
-
 class SingIn(FormView):
-    form_class = RegUserForm
+    form_class = RegUserFormIn
     user_id = None
 
     def get(self, request, *args, **kwargs):
         form = self.get_form()
-        form.fields.pop('referCode')  # 不要推荐码
         return render(request, 'blog/singin.html', context={'form': form})
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
-        form.fields.pop('referCode')  # 去掉推荐码
         if self.check_valid(form):
             return self.form_valid(form)
         else:
@@ -287,7 +276,7 @@ class SingUp(FormView):
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
-        form.error_class = Error_list
+        form.error_class = ErrorListCfg
         if form.is_valid():
             return self.form_valid(form)
         else:
