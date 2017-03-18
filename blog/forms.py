@@ -62,7 +62,7 @@ class upfile(AsDivBlock, forms.ModelForm):
 
 # 重置errorList，添加自定义的class类型 同时可以重载到as_div上，将错误改成div
 class ErrorListCfg(ErrorList):
-    def __init__(self, initlist=None):
+    def __init__(self, initlist=None, error_class=None):
         super(ErrorListCfg, self).__init__(initlist, error_class='yes')
 
     def __str__(self):
@@ -79,7 +79,7 @@ class ErrorListCfg(ErrorList):
 class RegUserForm(AsDivBlock, forms.ModelForm):
     required_css_class = 'form-group sr-only'
     # required不能再Meta中指定
-    referCoder = forms.IntegerField(label=False, required=False,  # 推荐码
+    referCoder = forms.IntegerField(label=False, required=False, error_messages={'invalid': '验证码必须是整数'}, # 推荐码
                                     widget=forms.NumberInput(attrs={'class': 'form-control center-block',
                                                                     'type': 'tel', 'name': 'referCode',
                                                                     'placeholder': '推荐码,可以为空'}))
@@ -95,7 +95,7 @@ class RegUserForm(AsDivBlock, forms.ModelForm):
             'pwd': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '********'}),
         }
         error_messages = {
-            'email': {'required': "用户名不能为空", 'unique': '用户名不能重复'},
+            'email': {'required': "用户名不能为空", 'unique': '用户名不能重复', 'invalid': '输入无效邮箱'},
             'pwd': {'required': "密码不能为空"},
         }
 
@@ -107,8 +107,14 @@ class RegUserForm(AsDivBlock, forms.ModelForm):
 # bound 中有一个form指回这个form
 # 只有Is_bound 和 errors为空时候is_vaild为TRUE，那么说明只有form是bound的情况下才可行
 # fields不为空只有在data有值的时候is_bound为true
-# 在viewForm中在get_form的时候会从request中自动取出一些值传递给viewForm绑定的form_class，生成绑定的form数据，并且验证他的有效性
-# 在form中有一个errors的东西是对self._selfs装饰而来的，在其内部会执行full_clean  -->到第二天处执行
+# 在viewForm中在get_form的时候会从request中自动取出一些值传递给viewForm绑定的form_class，生成绑定的form数据，
+# #并且验证他的有效性
+# 在form中有一个errors的东西是用property对errors装饰而来的，在其内部会执行full_clean
+# 每个field的clean->to_python->失败抛出ValidationError异常 成功则转换为正确的数据类型
+# 在外面捕获ValidationError异常通过add_error将异常添加到error_list中
+# full_clean先执行每个field.clean在执行自己定义的clean_<field_name>()函数，最后执行表单的form.clean
+
+
 
 #偷懒的方法
 class RegUserFormIn(RegUserForm):

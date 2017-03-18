@@ -11,7 +11,7 @@ from django.shortcuts import render, get_object_or_404, render_to_response
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView, DeleteView
 
-from .forms import BlogCommentForm, BlogCommentForm2, upfile, RegUserForm, RegUserFormIn, ErrorListCfg
+from .forms import BlogCommentForm, BlogCommentForm2, upfile, RegUserForm,  RegUserFormIn, ErrorListCfg
 from .models import Article, Category, Tag, BlogComment, ficx, RegisterUsers
 from django.views.generic.list import ListView
 import markdown2
@@ -261,7 +261,6 @@ class SingIn(FormView):
 # 注册
 class SingUp(FormView):
     form_class = RegUserForm
-    context_object_name = 'form_singup'
     template_name = 'blog/singup.html'
 
     def get(self, request, *args, **kwargs):
