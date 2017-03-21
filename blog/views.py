@@ -14,7 +14,7 @@ from django.shortcuts import render, get_object_or_404, render_to_response
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView, DeleteView
 
-from .forms import BlogCommentForm, BlogCommentForm2, upfile, RegUserForm, RegUserFormIn, ErrorListCfg
+from .forms import BlogCommentForm,  UpFile, RegUserForm, RegUserFormIn, ErrorListCfg
 from .models import Article, Category, Tag, BlogComment, ficx, RegisterUsers
 from django.views.generic.list import ListView
 import markdown2
@@ -166,31 +166,8 @@ class CommentPostView(FormView):
         })
 
 
-class CommentPostView2(FormView):
-    form_class = BlogCommentForm2
-    template_name = 'blog/detail.html'
-
-    def form_valid(self, form):
-        target_comment = get_object_or_404(BlogComment, pk=self.kwargs['comment_id'])
-        target_article = get_object_or_404(Article, pk=target_comment.id)
-        comment = form.save(commit=False)
-        comment.comment = target_comment
-        comment.save()
-        self.success_url = target_article.get_absolute_url()
-        return HttpResponseRedirect(self.success_url)
-
-    def form_invalid(self, form):
-        comment = get_object_or_404(BlogComment, pk=self.kwargs['comment_id'])
-        article = get_object_or_404(Article, pk=comment.id)
-        return render(self.request, 'blog/detail.html', {
-            'form': form,
-            'article': article,
-            'comment_list': article.blogcomment_set.all()
-        })
-
-
-class upLoad(FormView):
-    form_class = upfile
+class UpLoad(FormView):
+    form_class = UpFile
     context_object_name = 'form'
     template_name = 'blog/upLoadFile.html'
 
@@ -221,7 +198,7 @@ class upLoad(FormView):
         return HttpResponseRedirect(reverse("blog:upLoadFile_List"))
 
 
-class upLoadFile_list(ListView):
+class UpLoadFileList(ListView):
     model = ficx
     template_name = 'blog/file_list.html'
     context_object_name = 'file_list'

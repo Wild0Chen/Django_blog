@@ -27,7 +27,7 @@ if (null != id)
 
 
 $(document).ready(function () {
-    var $form = $('form')
+    var $form = $('comment_form')
     if ($('.errorlist').length == 0)
         $form.hide()
     else
@@ -120,3 +120,4 @@ $(function () {
         return false
     })
 })
+

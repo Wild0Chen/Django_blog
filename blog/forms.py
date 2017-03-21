@@ -39,16 +39,7 @@ class BlogCommentForm(AsDivBlock, forms.ModelForm):
         }
 
 
-class BlogCommentForm2(forms.ModelForm):
-    class Meta:
-        model = BlogComment2
-        fields = ['body']
-        widgets = {
-            'body': forms.Textarea(attrs={'placeholder': 'i say2~'}),
-        }
-
-
-class upfile(AsDivBlock, forms.ModelForm):
+class UpFile(AsDivBlock, forms.ModelForm):
     title = forms.CharField(max_length=50, label_suffix=':', label='自定义文件名-没用', required=False,
                             widget=forms.TextInput(attrs={'class': 'form-control',
                                                           'placeholder': '可以为空'}))
