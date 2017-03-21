@@ -20,4 +20,6 @@ urlpatterns = [
     url(r'^singup/$', views.SingUp.as_view(), name='singup'),  # 注册
     url(r'^singup/(?P<refer_code>\d+)/$', views.SingUp.as_view(), name='singup_refer'),  # 注册
     url(r'^user_admin/(?P<user_id>\d+)/$', views.user_admin, name='user_admin'),  #推荐码注册
+    url(r'^ajax_add_comment/$', views.ajax_add),
+    url(r'^ajax_del_comment/$', views.ajax_del),
 ]

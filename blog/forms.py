@@ -32,6 +32,11 @@ class BlogCommentForm(AsDivBlock, forms.ModelForm):
             }),
             'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'i say~'}),
         }
+        error_messages = {
+            'user_name': {'required': "用户名不能为空"},
+            'user_email': {'invalid': '输入无效邮箱', 'required': "用户名不能为空"},
+            'body': {'required': "用户名不能为空"},
+        }
 
 
 class BlogCommentForm2(forms.ModelForm):
@@ -79,7 +84,7 @@ class ErrorListCfg(ErrorList):
 class RegUserForm(AsDivBlock, forms.ModelForm):
     required_css_class = 'form-group sr-only'
     # required不能再Meta中指定
-    referCoder = forms.IntegerField(label=False, required=False, error_messages={'invalid': '验证码必须是整数'}, # 推荐码
+    referCoder = forms.IntegerField(label=False, required=False, error_messages={'invalid': '验证码必须是整数'},  # 推荐码
                                     widget=forms.NumberInput(attrs={'class': 'form-control center-block',
                                                                     'type': 'tel', 'name': 'referCode',
                                                                     'placeholder': '推荐码,可以为空'}))
@@ -116,15 +121,16 @@ class RegUserForm(AsDivBlock, forms.ModelForm):
 
 
 
-#偷懒的方法
+# 偷懒的方法
 class RegUserFormIn(RegUserForm):
-    referCoder = None#取消掉父类的属性
+    referCoder = None  # 取消掉父类的属性
 
     class Meta(RegUserForm.Meta):
         fields = ['email', 'pwd']
         exclude = ['referCode']
+
 # 如果上面的referCoder是在Meta中的，那么我可以通过这种形式对他排除
-#或者将referCoder进行空引用
-#如果不想继承在form。fields中去掉它也可以，因为它不是表单必须数据，且它不是require数据
-#不是required的表单数据是可以不完整提交的
+# 或者将referCoder进行空引用
+# 如果不想继承在form。fields中去掉它也可以，因为它不是表单必须数据，且它不是require数据
+# 不是required的表单数据是可以不完整提交的
 # form.fields.pop('referCoder')  # 去掉推荐码

@@ -12,6 +12,7 @@
             <li class="active">
                 <a href="{% url 'blog:detail' article.pk %}" rel="bookmark"> {{ article.title }}</a>
             </li>
+            <p hidden id="article_id">{{article.id}}</p>
         </ol>
     </div>
     <!--主题-->

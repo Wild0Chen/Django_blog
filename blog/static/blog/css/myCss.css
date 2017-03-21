@@ -113,3 +113,7 @@ textarea.form-control{
     padding: 15px;
     margin: 0 auto;
 }
+
+.comment-list{
+    margin-top: 20px;
+}

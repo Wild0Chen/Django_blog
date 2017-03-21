@@ -3,6 +3,9 @@ import sys
 
 from django.forms.extras import SelectDateWidget
 from django.forms.utils import ErrorList
+from django.http import HttpResponse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 sys.path.append('../')
 from django.core.urlresolvers import reverse
@@ -11,7 +14,7 @@ from django.shortcuts import render, get_object_or_404, render_to_response
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView, DeleteView
 
-from .forms import BlogCommentForm, BlogCommentForm2, upfile, RegUserForm,  RegUserFormIn, ErrorListCfg
+from .forms import BlogCommentForm, BlogCommentForm2, upfile, RegUserForm, RegUserFormIn, ErrorListCfg
 from .models import Article, Category, Tag, BlogComment, ficx, RegisterUsers
 from django.views.generic.list import ListView
 import markdown2
@@ -208,10 +211,10 @@ class upLoad(FormView):
     def form_valid(self, form):
         up_file = form.save(commit=False)
         up_file.save()
-        #废弃,使用modelForm方式继承，不需要再使用通过创建模型的方式save
-        #保留这段注释，原来form从forms.Form继承，现在是从ModelForm继承，
-        #体现出两种继承方式中save的区别
-        #modelform中直接创建model对象直接save，Form需要自己创建并初始化它
+        # 废弃,使用modelForm方式继承，不需要再使用通过创建模型的方式save
+        # 保留这段注释，原来form从forms.Form继承，现在是从ModelForm继承，
+        # 体现出两种继承方式中save的区别
+        # modelform中直接创建model对象直接save，Form需要自己创建并初始化它
         # file = form.files['file']
         # f = ficx()
         # f.filex.save(file.name, file)
@@ -299,3 +302,23 @@ def user_admin(request, user_id):
     referCode_url = 'http://' + request.META['HTTP_HOST'] + '/singup/' + str(user.referCode)
     return render_to_response('blog/user_admin.html', context={'referCode_url': referCode_url, 'user': user})
 
+
+@csrf_exempt
+def ajax_add(request):
+    form = BlogCommentForm(data=request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        article = get_object_or_404(Article, pk=request.POST['article_id'])
+        comment.article = article
+        comment.save()
+        return render_to_response('blog/comment2.html',
+                                  context={'comment': comment, 'index': BlogComment.objects.count()})
+    else:
+        return HttpResponse('')
+
+
+@csrf_exempt
+def ajax_del(request):
+    comment = get_object_or_404(BlogComment, pk=request.POST['comment_id'])
+    # comment.delete()#测试完成
+    return JsonResponse(data={'how': '1'})

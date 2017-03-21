@@ -1,7 +1,19 @@
-<form method="post" action="{% url 'blog:comment2' comment.id %}">
-    {% csrf_token %}
-    <div class="row">
-        {{ form2 }}
+{% load staticfiles %}
+<img src="{% static 'blog/img/pic.png' %}">
+<p>{{ index }}楼<br><span class="user-nickname">{{ comment.user_name }}:</span></p>
+<div class="block-shadow block-comment-show">
+    <br>
+    {{ comment.body }}
+    <br>
+    <div>
+        <p class="text-right">{{ comment.create_tim|date:"Y年n月d日 P" }}</p>
     </div>
-    <button type="submit" class="comm-button">回复</button>
-</form>
+    <p class="text-right">
+        <!--js实现-->
+        <!--<a href="##">回复</a>-->
+        <span hidden>{{comment.id}}</span>
+        <a href="{% url 'blog:comment_del' comment.id %}">删除</a>
+        <br/>
+    </p>
+</div>
+
