@@ -60,7 +60,6 @@ class ArticleDetailView(DetailView):
     def get_context_data(self, **kwargs):
         kwargs['comment_list'] = self.object.blogcomment_set.all()
         kwargs['form'] = BlogCommentForm()
-        kwargs['form2'] = BlogCommentForm2()
         return super(ArticleDetailView, self).get_context_data(**kwargs)
 
 
