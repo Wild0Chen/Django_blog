@@ -5,6 +5,6 @@ pytz==2016.6.1
 
 sudo pip install xxx -i http://mirrors.aliyun.com/pip/simple
 执行后timezone问题
-mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p  mysql
+mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p  --force mysql
 重启数据库
 mac mysql.server restart
