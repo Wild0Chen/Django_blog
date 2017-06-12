@@ -21,7 +21,7 @@
         </div>
 
         {% load paginate_tags %}
-
+		{% paginate article_list 7 %}
         {% for article in article_list %}
         <div class="block-shadow">
             <h1 >
@@ -39,6 +39,7 @@
             </div>
         </div>
         {% endfor %}
+		{% include 'blog/pagination.html' %}
     </div>
 
     <div class="col-md-3">

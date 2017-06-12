@@ -296,5 +296,5 @@ def ajax_add(request):
 @csrf_exempt
 def ajax_del(request):
     comment = get_object_or_404(BlogComment, pk=request.POST['comment_id'])
-    # comment.delete()#测试完成
+    comment.delete()#测试完成
     return JsonResponse(data={'how': '1'})
