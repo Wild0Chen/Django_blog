@@ -8,3 +8,5 @@ sudo pip install xxx -i http://mirrors.aliyun.com/pip/simple
 mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root -p  --force mysql
 重启数据库
 mac mysql.server restart
+
+---------------kkkkkkk----------------
